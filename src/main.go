@@ -13,6 +13,11 @@ import (
 
 var turn = config.CELL_BLACK
 
+type Game struct {
+	Board [8][8]int
+}
+
+
 func (g *Game) Update() error {
 	// ウィンドウ外にカーソルがある場合は何もしない
 	cursorX, cursorY := ebiten.CursorPosition()
