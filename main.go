@@ -41,9 +41,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		// 縦
 		vector.StrokeLine(
 			screen,
-			float32(gridWidth + rectLength*i),
+			float32(gridWidth*i + rectLength*i),
 			0,
-			float32(gridWidth + rectLength*i),
+			float32(gridWidth*i + rectLength*i),
 			float32(SCREEN_HEIGHT),
 			float32(gridWidth),
 			color.Black,
@@ -54,9 +54,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		vector.StrokeLine(
 			screen,
 			0,
-			float32(gridWidth + rectLength*i),
+			float32(gridWidth*i + rectLength*i),
 			float32(SCREEN_WIDTH),
-			float32(gridWidth + rectLength*i),
+			float32(gridWidth*i + rectLength*i),
 			float32(gridWidth),
 			color.Black,
 			false,
