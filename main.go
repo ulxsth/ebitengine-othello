@@ -57,6 +57,12 @@ func (g *Game) Update() error {
 	}
 
 	board[targetRow][targetCol] = turn
+  if turn == CELL_BLACK {
+		turn = CELL_WHITE
+	} else {
+		turn = CELL_BLACK
+	}
+
 	return nil
 }
 
