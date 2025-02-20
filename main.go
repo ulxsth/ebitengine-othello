@@ -13,6 +13,12 @@ const (
 	SCREEN_WIDTH  = 330
 	SCREEN_HEIGHT = 330
 
+	BORDER_WIDTH = 5
+	RECT_WIDTH = SCREEN_WIDTH - BORDER_WIDTH*2
+	RECT_HEIGHT = SCREEN_HEIGHT - BORDER_WIDTH*2
+	GRID_WIDTH = 1
+	RECT_LENGTH = (SCREEN_WIDTH - BORDER_WIDTH*2) / 8
+
 	CELL_EMPTY = 0
 	CELL_BLACK = 1
 	CELL_WHITE = 2
@@ -32,36 +38,38 @@ var board = [8][8]int{
 type Game struct{}
 
 func (g *Game) Update() error {
+	// 駒設置
+	cursorX, cursorY := ebiten.CursorPosition()
+	if(cursorX < 0 || cursorY < 0 || cursorX > SCREEN_WIDTH || cursorY > SCREEN_HEIGHT) {
+		return nil
+	}
+	
+	
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	// オセロ盤のベースの部分（緑の四角）
-	borderWidth := 5
-	rectWidth := SCREEN_WIDTH - borderWidth*2
-	rectHeight := SCREEN_HEIGHT - borderWidth*2
 	vector.DrawFilledRect(
 		screen,
-		float32(borderWidth),
-		float32(borderWidth),
-		float32(rectWidth),
-		float32(rectHeight),
+		float32(BORDER_WIDTH),
+		float32(BORDER_WIDTH),
+		float32(RECT_WIDTH),
+		float32(RECT_HEIGHT),
 		color.RGBA{0x00, 0x80, 0x00, 0xff},
 		false,
 	)
 
 	// グリッドを引く
-	gridWidth := 1
-	rectLength := (SCREEN_WIDTH - borderWidth*2) / 8
 	for i := 1; i < 8; i++ {
 		// 縦
 		vector.StrokeLine(
 			screen,
-			float32(gridWidth*i+rectLength*i),
+			float32(GRID_WIDTH*i+RECT_LENGTH*i),
 			0,
-			float32(gridWidth*i+rectLength*i),
+			float32(GRID_WIDTH*i+RECT_LENGTH*i),
 			float32(SCREEN_HEIGHT),
-			float32(gridWidth),
+			float32(GRID_WIDTH),
 			color.Black,
 			false,
 		)
@@ -70,10 +78,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		vector.StrokeLine(
 			screen,
 			0,
-			float32(gridWidth*i+rectLength*i),
+			float32(GRID_WIDTH*i+RECT_LENGTH*i),
 			float32(SCREEN_WIDTH),
-			float32(gridWidth*i+rectLength*i),
-			float32(gridWidth),
+			float32(GRID_WIDTH*i+RECT_LENGTH*i),
+			float32(GRID_WIDTH),
 			color.Black,
 			false,
 		)
@@ -99,9 +107,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			vector.DrawFilledCircle(
 				screen,
-				float32(rectLength/2 + rectLength*x + gridWidth*x),
-				float32(rectLength/2 + rectLength*y + gridWidth*y),				
-				float32(rectLength / 2) - 2,
+				float32(RECT_LENGTH/2 + RECT_LENGTH*x + GRID_WIDTH*x),
+				float32(RECT_LENGTH/2 + RECT_LENGTH*y + GRID_WIDTH*y),				
+				float32(RECT_LENGTH / 2) - 2,
 				pieceColor,
 				true,
 			)
