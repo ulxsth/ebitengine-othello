@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"image/color"
 	"log"
 
@@ -11,7 +12,22 @@ import (
 const (
 	SCREEN_WIDTH  = 330
 	SCREEN_HEIGHT = 330
+
+	CELL_EMPTY = 0
+	CELL_BLACK = 1
+	CELL_WHITE = 2
 )
+
+var board = [8][8]int{
+	{0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 1, 2, 0, 0, 0},
+	{0, 0, 0, 2, 1, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0},
+}
 
 type Game struct{}
 
@@ -26,7 +42,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	rectHeight := SCREEN_HEIGHT - borderWidth*2
 	vector.DrawFilledRect(
 		screen,
-		float32(borderWidth), 
+		float32(borderWidth),
 		float32(borderWidth),
 		float32(rectWidth),
 		float32(rectHeight),
@@ -36,14 +52,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	// グリッドを引く
 	gridWidth := 1
-	rectLength := (SCREEN_WIDTH-borderWidth*2) / 8
+	rectLength := (SCREEN_WIDTH - borderWidth*2) / 8
 	for i := 1; i < 8; i++ {
 		// 縦
 		vector.StrokeLine(
 			screen,
-			float32(gridWidth*i + rectLength*i),
+			float32(gridWidth*i+rectLength*i),
 			0,
-			float32(gridWidth*i + rectLength*i),
+			float32(gridWidth*i+rectLength*i),
 			float32(SCREEN_HEIGHT),
 			float32(gridWidth),
 			color.Black,
@@ -54,13 +70,42 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		vector.StrokeLine(
 			screen,
 			0,
-			float32(gridWidth*i + rectLength*i),
+			float32(gridWidth*i+rectLength*i),
 			float32(SCREEN_WIDTH),
-			float32(gridWidth*i + rectLength*i),
+			float32(gridWidth*i+rectLength*i),
 			float32(gridWidth),
 			color.Black,
 			false,
 		)
+	}
+
+	// オセロの石を描画
+	for y := 0; y < 8; y++ {
+		for x := 0; x < 8; x++ {
+			piece := board[y][x]
+			if piece == CELL_EMPTY {
+				continue
+			}
+
+			var pieceColor color.Color
+			if piece == CELL_BLACK {
+				pieceColor = color.Black
+			} else if piece == CELL_WHITE {
+				pieceColor = color.White
+			} else {
+				err := errors.New("invalid piece")
+				log.Fatal(err)
+			}
+
+			vector.DrawFilledCircle(
+				screen,
+				float32(SCREEN_WIDTH*x + gridWidth*x + borderWidth),
+				float32(SCREEN_HEIGHT*y + gridWidth*y + borderWidth),				
+				float32(rectLength / 2),
+				pieceColor,
+				true,
+			)
+		}
 	}
 }
 
