@@ -133,6 +133,35 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			)
 		}
 	}
+
+	// ホバーした位置に薄く駒を表示
+	cursorX, cursorY := ebiten.CursorPosition()
+	targetRow := cursorY / (RECT_LENGTH+GRID_WIDTH)
+	targetCol := cursorX / (RECT_LENGTH+GRID_WIDTH)
+	if targetRow < 0 || targetRow >= 8 || targetCol < 0 || targetCol >= 8 {
+		return
+	}
+
+	if board[targetRow][targetCol] == CELL_EMPTY {
+		var pieceColor color.Color
+		if turn == CELL_BLACK {
+			pieceColor = color.RGBA{0x00, 0x00, 0x00, 0x77}
+		} else if turn == CELL_WHITE {
+			pieceColor = color.RGBA{0xaa, 0xaa, 0xaa, 0x77}
+		} else {
+			err := errors.New("invalid piece")
+			log.Fatal(err)
+		}
+
+		vector.DrawFilledCircle(
+			screen,
+			float32(RECT_LENGTH/2 + RECT_LENGTH*targetCol + GRID_WIDTH*targetCol),
+			float32(RECT_LENGTH/2 + RECT_LENGTH*targetRow + GRID_WIDTH*targetRow),				
+			float32(RECT_LENGTH / 2) - 2,
+			pieceColor,
+			true,
+		)
+	}
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
