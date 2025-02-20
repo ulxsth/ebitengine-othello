@@ -28,19 +28,19 @@ type Game struct{}
 func (g *Game) Update() error {
 	// ウィンドウ外にカーソルがある場合は何もしない
 	cursorX, cursorY := ebiten.CursorPosition()
-	if(cursorX < 0 || cursorY < 0 || cursorX > config.SCREEN_WIDTH || cursorY > config.SCREEN_HEIGHT) {
+	if cursorX < 0 || cursorY < 0 || cursorX > config.SCREEN_LENGTH || cursorY > config.SCREEN_LENGTH {
 		return nil
 	}
 
 	// 駒設置
-	targetRow := cursorY / (config.RECT_LENGTH+config.GRID_WIDTH)
-	targetCol := cursorX / (config.RECT_LENGTH+config.GRID_WIDTH)
+	targetRow := cursorY / (config.CELL_LENGTH + config.GRID_WIDTH)
+	targetCol := cursorX / (config.CELL_LENGTH + config.GRID_WIDTH)
 	if !ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		return nil
 	}
-	
+
 	if board[targetRow][targetCol] != config.CELL_EMPTY {
-		return nil	
+		return nil
 	}
 
 	board[targetRow][targetCol] = turn
@@ -57,10 +57,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// オセロ盤のベースの部分（緑の四角）
 	vector.DrawFilledRect(
 		screen,
-		float32(config.BORDER_WIDTH),
-		float32(config.BORDER_WIDTH),
-		float32(config.RECT_WIDTH),
-		float32(config.RECT_HEIGHT),
+		float32(config.OUTER_MARGIN),
+		float32(config.OUTER_MARGIN),
+		float32(config.BOARD_LENGTH),
+		float32(config.BOARD_LENGTH),
 		color.RGBA{0x00, 0x80, 0x00, 0xff},
 		false,
 	)
@@ -70,10 +70,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		// 縦
 		vector.StrokeLine(
 			screen,
-			float32(config.GRID_WIDTH*i+config.RECT_LENGTH*i),
+			float32(config.GRID_WIDTH*i+config.CELL_LENGTH*i),
 			0,
-			float32(config.GRID_WIDTH*i+config.RECT_LENGTH*i),
-			float32(config.SCREEN_HEIGHT),
+			float32(config.GRID_WIDTH*i+config.CELL_LENGTH*i),
+			float32(config.SCREEN_LENGTH),
 			float32(config.GRID_WIDTH),
 			color.Black,
 			false,
@@ -83,9 +83,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		vector.StrokeLine(
 			screen,
 			0,
-			float32(config.GRID_WIDTH*i+config.RECT_LENGTH*i),
-			float32(config.SCREEN_WIDTH),
-			float32(config.GRID_WIDTH*i+config.RECT_LENGTH*i),
+			float32(config.GRID_WIDTH*i+config.CELL_LENGTH*i),
+			float32(config.SCREEN_LENGTH),
+			float32(config.GRID_WIDTH*i+config.CELL_LENGTH*i),
 			float32(config.GRID_WIDTH),
 			color.Black,
 			false,
@@ -112,9 +112,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			vector.DrawFilledCircle(
 				screen,
-				float32(config.RECT_LENGTH/2 + config.RECT_LENGTH*x + config.GRID_WIDTH*x),
-				float32(config.RECT_LENGTH/2 + config.RECT_LENGTH*y + config.GRID_WIDTH*y),				
-				float32(config.RECT_LENGTH / 2) - 2,
+				float32(config.CELL_LENGTH/2+config.CELL_LENGTH*x+config.GRID_WIDTH*x),
+				float32(config.CELL_LENGTH/2+config.CELL_LENGTH*y+config.GRID_WIDTH*y),
+				float32(config.CELL_LENGTH/2)-2,
 				pieceColor,
 				true,
 			)
@@ -123,8 +123,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	// ホバーした位置に薄く駒を表示
 	cursorX, cursorY := ebiten.CursorPosition()
-	targetRow := cursorY / (config.RECT_LENGTH+config.GRID_WIDTH)
-	targetCol := cursorX / (config.RECT_LENGTH+config.GRID_WIDTH)
+	targetRow := cursorY / (config.CELL_LENGTH + config.GRID_WIDTH)
+	targetCol := cursorX / (config.CELL_LENGTH + config.GRID_WIDTH)
 	if targetRow < 0 || targetRow >= 8 || targetCol < 0 || targetCol >= 8 {
 		return
 	}
@@ -142,9 +142,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		vector.DrawFilledCircle(
 			screen,
-			float32(config.RECT_LENGTH/2 + config.RECT_LENGTH*targetCol + config.GRID_WIDTH*targetCol),
-			float32(config.RECT_LENGTH/2 + config.RECT_LENGTH*targetRow + config.GRID_WIDTH*targetRow),				
-			float32(config.RECT_LENGTH / 2) - 2,
+			float32(config.CELL_LENGTH/2+config.CELL_LENGTH*targetCol+config.GRID_WIDTH*targetCol),
+			float32(config.CELL_LENGTH/2+config.CELL_LENGTH*targetRow+config.GRID_WIDTH*targetRow),
+			float32(config.CELL_LENGTH/2)-2,
 			pieceColor,
 			true,
 		)
@@ -152,11 +152,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return config.SCREEN_WIDTH, config.SCREEN_HEIGHT
+	return config.SCREEN_LENGTH, config.SCREEN_LENGTH
 }
 
 func main() {
-	ebiten.SetWindowSize(640, 480)
+	ebiten.SetWindowSize(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
 	ebiten.SetWindowTitle("Hello, World!")
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
