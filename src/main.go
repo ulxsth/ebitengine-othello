@@ -11,19 +11,7 @@ import (
 	"ebitengine-othello/src/config"
 )
 
-var board = [8][8]int{
-	{0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 1, 2, 0, 0, 0},
-	{0, 0, 0, 2, 1, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0},
-}
 var turn = config.CELL_BLACK
-
-type Game struct{}
 
 func (g *Game) Update() error {
 	// ウィンドウ外にカーソルがある場合は何もしない
@@ -39,11 +27,11 @@ func (g *Game) Update() error {
 		return nil
 	}
 
-	if board[targetRow][targetCol] != config.CELL_EMPTY {
+	if g.Board[targetRow][targetCol] != config.CELL_EMPTY {
 		return nil
 	}
 
-	board[targetRow][targetCol] = turn
+	g.Board[targetRow][targetCol] = turn
 	if turn == config.CELL_BLACK {
 		turn = config.CELL_WHITE
 	} else {
@@ -95,7 +83,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// オセロの石を描画
 	for y := 0; y < 8; y++ {
 		for x := 0; x < 8; x++ {
-			piece := board[y][x]
+			piece := g.Board[y][x]
 			if piece == config.CELL_EMPTY {
 				continue
 			}
@@ -129,7 +117,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	if board[targetRow][targetCol] == config.CELL_EMPTY {
+	if g.Board[targetRow][targetCol] == config.CELL_EMPTY {
 		var pieceColor color.Color
 		if turn == config.CELL_BLACK {
 			pieceColor = color.RGBA{0x00, 0x00, 0x00, 0x77}
@@ -158,7 +146,19 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 func main() {
 	ebiten.SetWindowSize(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
 	ebiten.SetWindowTitle("Hello, World!")
-	if err := ebiten.RunGame(&Game{}); err != nil {
+	game := &Game{
+		Board: [8][8]int{
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 1, 2, 0, 0, 0},
+			{0, 0, 0, 2, 1, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+		},
+	}
+	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
 }
