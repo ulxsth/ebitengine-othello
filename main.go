@@ -33,6 +33,35 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		color.RGBA{0x00, 0x80, 0x00, 0xff},
 		false,
 	)
+
+	// グリッドを引く
+	gridWidth := 1
+	rectLength := (SCREEN_WIDTH-borderWidth*2) / 8
+	for i := 1; i < 8; i++ {
+		// 縦
+		vector.StrokeLine(
+			screen,
+			float32(gridWidth + rectLength*i),
+			0,
+			float32(gridWidth + rectLength*i),
+			float32(SCREEN_HEIGHT),
+			float32(gridWidth),
+			color.Black,
+			false,
+		)
+
+		// 横
+		vector.StrokeLine(
+			screen,
+			0,
+			float32(gridWidth + rectLength*i),
+			float32(SCREEN_WIDTH),
+			float32(gridWidth + rectLength*i),
+			float32(gridWidth),
+			color.Black,
+			false,
+		)
+	}
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
