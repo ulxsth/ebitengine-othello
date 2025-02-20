@@ -99,9 +99,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			vector.DrawFilledCircle(
 				screen,
-				float32(SCREEN_WIDTH*x + gridWidth*x + borderWidth),
-				float32(SCREEN_HEIGHT*y + gridWidth*y + borderWidth),				
-				float32(rectLength / 2),
+				float32(rectLength/2 + rectLength*x + gridWidth*x),
+				float32(rectLength/2 + rectLength*y + gridWidth*y),				
+				float32(rectLength / 2) - 2,
 				pieceColor,
 				true,
 			)
