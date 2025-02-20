@@ -34,17 +34,29 @@ var board = [8][8]int{
 	{0, 0, 0, 0, 0, 0, 0, 0},
 	{0, 0, 0, 0, 0, 0, 0, 0},
 }
+var turn = CELL_BLACK
 
 type Game struct{}
 
 func (g *Game) Update() error {
-	// 駒設置
+	// ウィンドウ外にカーソルがある場合は何もしない
 	cursorX, cursorY := ebiten.CursorPosition()
 	if(cursorX < 0 || cursorY < 0 || cursorX > SCREEN_WIDTH || cursorY > SCREEN_HEIGHT) {
 		return nil
 	}
+
+	// 駒設置
+	targetRow := cursorY / (RECT_LENGTH+GRID_WIDTH)
+	targetCol := cursorX / (RECT_LENGTH+GRID_WIDTH)
+	if !ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		return nil
+	}
 	
-	
+	if board[targetRow][targetCol] != CELL_EMPTY {
+		return nil	
+	}
+
+	board[targetRow][targetCol] = turn
 	return nil
 }
 
