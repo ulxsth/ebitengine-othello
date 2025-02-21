@@ -5,8 +5,8 @@ import (
 	"image/color"
 	"log"
 
-	"ebitengine-othello/src/domain"
 	"ebitengine-othello/src/config"
+	"ebitengine-othello/src/domain"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -18,7 +18,7 @@ type EbitenGame struct {
 
 func (g *EbitenGame) Update() error {
 	board := &g.GameStatus.Board
-	turn := &g.GameStatus.Turn
+	turn := &g.GameStatus.Side
 
 	// ウィンドウ外にカーソルがある場合は何もしない
 	cursorX, cursorY := ebiten.CursorPosition()
@@ -33,6 +33,7 @@ func (g *EbitenGame) Update() error {
 		return nil
 	}
 
+	// クリックした位置に駒がある場合は何もしない
 	if board[targetRow][targetCol] != config.CELL_EMPTY {
 		return nil
 	}
@@ -49,7 +50,7 @@ func (g *EbitenGame) Update() error {
 
 func (g *EbitenGame) Draw(screen *ebiten.Image) {
 	board := &g.GameStatus.Board
-	turn := &g.GameStatus.Turn
+	turn := &g.GameStatus.Side
 
 	// オセロ盤のベースの部分（緑の四角）
 	vector.DrawFilledRect(
@@ -152,24 +153,23 @@ func (g *EbitenGame) Layout(outsideWidth, outsideHeight int) (screenWidth, scree
 	return config.SCREEN_LENGTH, config.SCREEN_LENGTH
 }
 
-
 func main() {
 	ebiten.SetWindowSize(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
 	ebiten.SetWindowTitle("Hello, World!")
 	game := &EbitenGame{
 		GameStatus: domain.GameStatus{
-		Board: [8][8]int{
-			{0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 1, 2, 0, 0, 0},
-			{0, 0, 0, 2, 1, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0},
+			Board: [8][8]int{
+				{0, 0, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 1, 2, 0, 0, 0},
+				{0, 0, 0, 2, 1, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0},
+			},
+			Side: config.CELL_BLACK,
 		},
-		Turn: config.CELL_BLACK,
-	},
 	}
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
