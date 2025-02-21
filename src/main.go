@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"log"
 
+	"ebitengine-othello/src/domain"
 	"ebitengine-othello/src/config"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -12,11 +13,13 @@ import (
 )
 
 type EbitenGame struct {
-	Board [8][8]int
-	Turn  int
+	GameStatus domain.GameStatus
 }
 
 func (g *EbitenGame) Update() error {
+	board := &g.GameStatus.Board
+	turn := &g.GameStatus.Turn
+
 	// ウィンドウ外にカーソルがある場合は何もしない
 	cursorX, cursorY := ebiten.CursorPosition()
 	if cursorX < 0 || cursorY < 0 || cursorX > config.SCREEN_LENGTH || cursorY > config.SCREEN_LENGTH {
@@ -30,21 +33,24 @@ func (g *EbitenGame) Update() error {
 		return nil
 	}
 
-	if g.Board[targetRow][targetCol] != config.CELL_EMPTY {
+	if board[targetRow][targetCol] != config.CELL_EMPTY {
 		return nil
 	}
 
-	g.Board[targetRow][targetCol] = g.Turn
-	if g.Turn == config.CELL_BLACK {
-		g.Turn = config.CELL_WHITE
+	board[targetRow][targetCol] = *turn
+	if *turn == config.CELL_BLACK {
+		*turn = config.CELL_WHITE
 	} else {
-		g.Turn = config.CELL_BLACK
+		*turn = config.CELL_BLACK
 	}
 
 	return nil
 }
 
 func (g *EbitenGame) Draw(screen *ebiten.Image) {
+	board := &g.GameStatus.Board
+	turn := &g.GameStatus.Turn
+
 	// オセロ盤のベースの部分（緑の四角）
 	vector.DrawFilledRect(
 		screen,
@@ -86,7 +92,7 @@ func (g *EbitenGame) Draw(screen *ebiten.Image) {
 	// オセロの石を描画
 	for y := 0; y < 8; y++ {
 		for x := 0; x < 8; x++ {
-			piece := g.Board[y][x]
+			piece := board[y][x]
 			if piece == config.CELL_EMPTY {
 				continue
 			}
@@ -120,11 +126,11 @@ func (g *EbitenGame) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	if g.Board[targetRow][targetCol] == config.CELL_EMPTY {
+	if board[targetRow][targetCol] == config.CELL_EMPTY {
 		var pieceColor color.Color
-		if g.Turn == config.CELL_BLACK {
+		if *turn == config.CELL_BLACK {
 			pieceColor = color.RGBA{0x00, 0x00, 0x00, 0x77}
-		} else if g.Turn == config.CELL_WHITE {
+		} else if *turn == config.CELL_WHITE {
 			pieceColor = color.RGBA{0xaa, 0xaa, 0xaa, 0x77}
 		} else {
 			err := errors.New("invalid piece")
@@ -151,6 +157,7 @@ func main() {
 	ebiten.SetWindowSize(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
 	ebiten.SetWindowTitle("Hello, World!")
 	game := &EbitenGame{
+		GameStatus: domain.GameStatus{
 		Board: [8][8]int{
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},
@@ -162,6 +169,7 @@ func main() {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 		},
 		Turn: config.CELL_BLACK,
+	},
 	}
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
