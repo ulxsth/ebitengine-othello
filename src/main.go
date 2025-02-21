@@ -7,6 +7,7 @@ import (
 
 	"ebitengine-othello/src/config"
 	"ebitengine-othello/src/domain"
+	"ebitengine-othello/src/usecase"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -28,8 +29,7 @@ func (g *EbitenGame) Update() error {
 		return nil
 	}
 
-	g.GameStatus.Place(targetCol, targetRow)
-	
+	usecase.Place(&g.GameStatus, targetCol, targetRow)
 	return nil
 }
 
