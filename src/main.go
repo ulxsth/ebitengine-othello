@@ -17,34 +17,19 @@ type EbitenGame struct {
 }
 
 func (g *EbitenGame) Update() error {
-	board := &g.GameStatus.Board
-	turn := &g.GameStatus.Side
-
 	// ウィンドウ外にカーソルがある場合は何もしない
 	cursorX, cursorY := ebiten.CursorPosition()
-	if cursorX < 0 || cursorY < 0 || cursorX > config.SCREEN_LENGTH || cursorY > config.SCREEN_LENGTH {
+	targetCol := cursorY / (config.CELL_LENGTH + config.GRID_WIDTH)
+	targetRow := cursorX / (config.CELL_LENGTH + config.GRID_WIDTH)
+	if targetRow < 0 || targetRow >= 8 || targetCol < 0 || targetCol >= 8 {
 		return nil
 	}
-
-	// 駒設置
-	targetRow := cursorY / (config.CELL_LENGTH + config.GRID_WIDTH)
-	targetCol := cursorX / (config.CELL_LENGTH + config.GRID_WIDTH)
 	if !ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		return nil
 	}
 
-	// クリックした位置に駒がある場合は何もしない
-	if board[targetRow][targetCol] != config.CELL_EMPTY {
-		return nil
-	}
-
-	board[targetRow][targetCol] = *turn
-	if *turn == config.CELL_BLACK {
-		*turn = config.CELL_WHITE
-	} else {
-		*turn = config.CELL_BLACK
-	}
-
+	g.GameStatus.Place(targetCol, targetRow)
+	
 	return nil
 }
 
