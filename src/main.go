@@ -5,12 +5,13 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"ebitengine-othello/src/config"
+	"ebitengine-othello/src/model"
 )
 
 func main() {
 	ebiten.SetWindowSize(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
 	ebiten.SetWindowTitle("Hello, World!")
-	game := &Game{
+	game := &model.Game{
 		Board: [8][8]int{
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},

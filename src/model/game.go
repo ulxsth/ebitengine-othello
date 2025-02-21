@@ -1,4 +1,4 @@
-package main
+package model
 
 import (
 	"ebitengine-othello/src/config"
