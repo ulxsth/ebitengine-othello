@@ -11,6 +11,7 @@ import (
 
 type Game struct {
 	Board [8][8]int
+	Turn int
 }
 
 func (g *Game) Update() error {
@@ -31,11 +32,11 @@ func (g *Game) Update() error {
 		return nil
 	}
 
-	g.Board[targetRow][targetCol] = turn
-	if turn == config.CELL_BLACK {
-		turn = config.CELL_WHITE
+	g.Board[targetRow][targetCol] = g.Turn
+	if g.Turn == config.CELL_BLACK {
+		g.Turn = config.CELL_WHITE
 	} else {
-		turn = config.CELL_BLACK
+		g.Turn = config.CELL_BLACK
 	}
 
 	return nil
@@ -119,9 +120,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if g.Board[targetRow][targetCol] == config.CELL_EMPTY {
 		var pieceColor color.Color
-		if turn == config.CELL_BLACK {
+		if g.Turn == config.CELL_BLACK {
 			pieceColor = color.RGBA{0x00, 0x00, 0x00, 0x77}
-		} else if turn == config.CELL_WHITE {
+		} else if g.Turn == config.CELL_WHITE {
 			pieceColor = color.RGBA{0xaa, 0xaa, 0xaa, 0x77}
 		} else {
 			err := errors.New("invalid piece")

@@ -2,12 +2,10 @@ package main
 
 import (
 	"log"
-	
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"ebitengine-othello/src/config"
 )
-
-var turn = config.CELL_BLACK
 
 func main() {
 	ebiten.SetWindowSize(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
@@ -23,6 +21,7 @@ func main() {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},
 		},
+		Turn: config.CELL_BLACK,
 	}
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
